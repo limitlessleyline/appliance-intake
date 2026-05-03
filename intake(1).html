@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Appliance Intake — Accredited Appliance</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1A56A0;
+    --blue-light: #EAF2FC;
+    --blue-mid: #3B7DD8;
+    --green: #1A7A4A;
+    --green-light: #E6F5ED;
+    --amber: #B45309;
+    --amber-light: #FEF3C7;
+    --red: #B91C1C;
+    --red-light: #FEE2E2;
+    --gray-50: #F8F9FA;
+    --gray-100: #F1F3F5;
+    --gray-200: #E9ECEF;
+    --gray-300: #DEE2E6;
+    --gray-400: #CED4DA;
+    --gray-500: #ADB5BD;
+    --gray-600: #6C757D;
+    --gray-700: #495057;
+    --gray-800: #343A40;
+    --gray-900: #212529;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F0F4F8;
+    min-height: 100vh;
+    color: var(--gray-900);
+    background-image: radial-gradient(ellipse at 20% 0%, rgba(26,86,160,0.07) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 100%, rgba(26,122,74,0.05) 0%, transparent 60%);
+  }
+
+  .page-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 99px;
+    padding: 4px 12px 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--blue);
+    letter-spacing: 0.03em;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .header-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--blue-mid); display: inline-block; }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--gray-900);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--gray-600);
+    font-weight: 400;
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 1.75rem;
+  }
+  .progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+  }
+  .progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    width: 100%;
+    height: 1.5px;
+    background: var(--gray-200);
+    z-index: 0;
+    transition: background 0.3s;
+  }
+  .progress-step.done:not(:last-child)::after { background: var(--blue); }
+  .step-circle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: white;
+    border: 1.5px solid var(--gray-300);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+    font-family: 'DM Mono', monospace;
+  }
+  .progress-step.active .step-circle {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(26,86,160,0.12);
+  }
+  .progress-step.done .step-circle {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+  }
+  .step-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--gray-400);
+    margin-top: 5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .progress-step.active .step-label { color: var(--blue); }
+  .progress-step.done .step-label { color: var(--gray-600); }
+
+  /* CARD */
+  .card {
+    background: white;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-200);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.01em;
+  }
+  .card-sub {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  /* APPLIANCE GRID */
+  .appliance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .appliance-btn {
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 14px 8px 12px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--gray-50);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .appliance-btn:hover { background: var(--blue-light); border-color: #93C0F0; }
+  .appliance-btn.selected {
+    background: var(--blue-light);
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26,86,160,0.1);
+  }
+  .appliance-btn .a-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  .appliance-btn .a-label { font-size: 11px; font-weight: 500; color: var(--gray-700); line-height: 1.3; }
+  .appliance-btn.selected .a-label { color: var(--blue); }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: var(--amber-light);
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--amber);
+    line-height: 1.6;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .disclaimer .d-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+
+  /* MODEL FINDER */
+  .model-finder {
+    background: var(--blue-light);
+    border: 1px solid #93C0F0;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-bottom: 1rem;
+  }
+  .model-finder-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .model-finder-locs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .loc-tag {
+    background: white;
+    border: 1px solid #93C0F0;
+    border-radius: 99px;
+    padding: 3px 10px;
+    font-size: 11px;
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 5px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 10px 13px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--gray-900);
+    background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(26,86,160,0.1);
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  input[type="text"].mono { font-family: 'DM Mono', monospace; font-size: 13px; letter-spacing: 0.05em; }
+
+  /* CHIPS */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.75rem; }
+  .chip {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 99px;
+    padding: 5px 13px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--gray-50);
+    color: var(--gray-700);
+    transition: all 0.12s;
+    user-select: none;
+  }
+  .chip:hover { background: var(--blue-light); border-color: #93C0F0; }
+  .chip.selected { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+
+  /* PHOTO UPLOAD */
+  .photo-drop {
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    background: var(--gray-50);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .photo-drop:hover { border-color: var(--blue); background: var(--blue-light); }
+  .photo-drop .drop-icon { font-size: 26px; margin-bottom: 6px; }
+  .photo-drop p { font-size: 12px; color: var(--gray-500); margin: 0; }
+  .photo-drop p strong { color: var(--gray-700); }
+  .photo-previews { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .photo-thumb { width: 68px; height: 68px; border-radius: var(--radius-sm); object-fit: cover; border: 1.5px solid var(--gray-200); }
+
+  /* AI RESPONSE */
+  .ai-block {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 1.1rem;
+    font-size: 13px;
+    line-height: 1.75;
+    color: var(--gray-800);
+  }
+  .ai-block h3 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    margin: 1rem 0 0.35rem;
+  }
+  .ai-block h3:first-child { margin-top: 0; }
+  .ai-block p { margin-bottom: 0.4rem; }
+  .ai-block ul { padding-left: 1.1rem; }
+  .ai-block li { margin-bottom: 0.25rem; }
+
+  .thinking {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1rem;
+    font-size: 13px;
+    color: var(--gray-500);
+  }
+  .dots { display: flex; gap: 4px; }
+  .dots span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue-mid);
+    animation: dotpulse 1.2s ease-in-out infinite;
+  }
+  .dots span:nth-child(2) { animation-delay: 0.2s; }
+  .dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dotpulse {
+    0%, 60%, 100% { transform: scale(0.6); opacity: 0.3; }
+    30% { transform: scale(1); opacity: 1; }
+  }
+
+  /* PARTS */
+  .part-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13px;
+  }
+  .part-item:last-child { border-bottom: none; }
+  .part-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue-mid); flex-shrink: 0; }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    background: var(--blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .btn-primary:hover { background: #1346A0; box-shadow: var(--shadow-md); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  .btn-back {
+    flex: 1;
+    background: white;
+    color: var(--gray-700);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-back:hover { background: var(--gray-50); }
+  .btn-row { display: flex; gap: 8px; margin-top: 1rem; }
+
+  /* SUCCESS */
+  .success-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 24px;
+  }
+  .summary-table { width: 100%; border-collapse: collapse; }
+  .summary-table tr td { padding: 7px 0; font-size: 13px; border-bottom: 1px solid var(--gray-100); }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table td:first-child { color: var(--gray-500); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; width: 40%; }
+  .summary-table td:last-child { font-weight: 500; color: var(--gray-800); }
+
+  .hidden { display: none !important; }
+
+  /* URGENCY BADGE */
+  .urgency-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .urgency-low { background: var(--green-light); color: var(--green); }
+  .urgency-medium { background: var(--amber-light); color: var(--amber); }
+  .urgency-high { background: var(--red-light); color: var(--red); }
+
+  @media (max-width: 480px) {
+    .appliance-grid { grid-template-columns: repeat(3, 1fr); }
+    .header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-badge"><span></span> Appliance Repair Intake</div>
+    <h1>Let's diagnose your appliance</h1>
+    <p>Answer a few questions so we can identify the issue before your appointment.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-step active" id="ps-1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Appliance</div>
+    </div>
+    <div class="progress-step" id="ps-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Details</div>
+    </div>
+    <div class="progress-step" id="ps-3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Symptoms</div>
+    </div>
+    <div class="progress-step" id="ps-4">
+      <div class="step-circle">4</div>
+      <div class="step-label">Diagnosis</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: APPLIANCE TYPE -->
+  <div id="step-1">
+    <div class="card">
+      <div class="card-title">What type of appliance needs repair?</div>
+      <div class="card-sub">Select the appliance to get started.</div>
+      <div class="appliance-grid">
+        <div class="appliance-btn" data-appliance="Refrigerator" onclick="selectAppliance(this)">
+          <span class="a-icon">🧊</span><span class="a-label">Refrigerator</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Washing Machine" onclick="selectAppliance(this)">
+          <span class="a-icon">🫧</span><span class="a-label">Washer</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Dryer" onclick="selectAppliance(this)">
+          <span class="a-icon">♨️</span><span class="a-label">Dryer</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Dishwasher" onclick="selectAppliance(this)">
+          <span class="a-icon">🍽️</span><span class="a-label">Dishwasher</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Oven / Range" onclick="selectAppliance(this)">
+          <span class="a-icon">🔥</span><span class="a-label">Oven / Range</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Microwave" onclick="selectAppliance(this)">
+          <span class="a-icon">📡</span><span class="a-label">Microwave</span>
+        </div>
+        <div class="appliance-btn" data-appliance="HVAC / AC" onclick="selectAppliance(this)">
+          <span class="a-icon">❄️</span><span class="a-label">HVAC / AC</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Water Heater" onclick="selectAppliance(this)">
+          <span class="a-icon">🚿</span><span class="a-label">Water Heater</span>
+        </div>
+        <div class="appliance-btn" data-appliance="Other" onclick="selectAppliance(this)">
+          <span class="a-icon">🔧</span><span class="a-label">Other</span>
+        </div>
+      </div>
+    </div>
+    <div id="step1-continue" class="hidden">
+      <button class="btn-primary" onclick="goStep(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: APPLIANCE DETAILS -->
+  <div id="step-2" class="hidden">
+    <div class="card">
+      <div class="card-title">Appliance details</div>
+      <div class="card-sub">The more detail you provide, the better we can prepare for your repair.</div>
+
+      <div class="field">
+        <label>Brand</label>
+        <input type="text" id="brand" placeholder="e.g. Whirlpool, Samsung, LG, Bosch…">
+      </div>
+
+      <div class="field">
+        <label>Appliance age</label>
+        <div class="chip-group" id="age-chips">
+          <span class="chip" onclick="selectChip(this,'age')">Under 2 yrs</span>
+          <span class="chip" onclick="selectChip(this,'age')">2–5 yrs</span>
+          <span class="chip" onclick="selectChip(this,'age')">5–10 yrs</span>
+          <span class="chip" onclick="selectChip(this,'age')">10–15 yrs</span>
+          <span class="chip" onclick="selectChip(this,'age')">15+ yrs</span>
+          <span class="chip" onclick="selectChip(this,'age')">Unknown</span>
+        </div>
+      </div>
+
+      <!-- Appliance-specific sub-type -->
+      <div class="field" id="subtype-field" style="display:none">
+        <label id="subtype-label">Configuration</label>
+        <div class="chip-group" id="subtype-chips"></div>
+      </div>
+    </div>
+
+    <!-- MODEL NUMBER SECTION -->
+    <div class="card">
+      <div class="card-title">Model & Serial Number</div>
+      <div class="card-sub">This is the single most important piece of information for diagnosing your appliance. We'll help you find it.</div>
+
+      <div class="disclaimer">
+        <span class="d-icon">⚠️</span>
+        <span>Before locating your label, ensure the appliance is turned off and unplugged. Only attempt to access and photograph the label if you can do so safely. Use caution when moving or repositioning larger appliances. If you're unsure, skip this step and describe your appliance as best you can.</span>
+      </div>
+
+      <div class="model-finder" id="model-finder">
+        <div class="model-finder-title">📍 Where to find the label on your <span id="appliance-name-label"></span></div>
+        <div class="model-finder-locs" id="model-locs"></div>
+      </div>
+
+      <div class="field">
+        <label>Model Number</label>
+        <input type="text" id="model-number" class="mono" placeholder="e.g. WRF535SWHZ07 — or upload a photo below">
+      </div>
+      <div class="field">
+        <label>Serial Number <span style="font-weight:400;text-transform:none;font-size:11px;color:var(--gray-400)">(optional but helpful)</span></label>
+        <input type="text" id="serial-number" class="mono" placeholder="Found on the same label as the model number">
+      </div>
+
+      <label style="margin-bottom:8px">Upload a photo of the label</label>
+      <div class="photo-drop" onclick="document.getElementById('label-photo').click()">
+        <div class="drop-icon">📷</div>
+        <p><strong>Tap to photograph the label</strong></p>
+        <p>Our AI will extract the model number from your photo</p>
+        <input type="file" id="label-photo" accept="image/*" style="display:none" onchange="handleLabelPhoto(event)">
+      </div>
+      <div id="label-preview" class="photo-previews"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <button class="btn-primary" style="flex:2" onclick="goStep(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: SYMPTOMS -->
+  <div id="step-3" class="hidden">
+    <div class="card">
+      <div class="card-title">What's going wrong?</div>
+      <div class="card-sub">Select all symptoms that apply.</div>
+      <div class="chip-group" id="symptom-chips"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Describe the issue</div>
+      <div class="card-sub">When did it start? Any error codes, sounds, or smells? The more detail the better.</div>
+      <textarea id="symptom-text" placeholder="e.g. Started making a loud banging noise 3 days ago during the spin cycle. No error codes on the display. The clothes are still wet after a full cycle."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Additional photos</div>
+      <div class="card-sub">Photos of the appliance, control panel, error codes, or any visible damage are very helpful.</div>
+      <div class="photo-drop" onclick="document.getElementById('symptom-photos').click()">
+        <div class="drop-icon">📸</div>
+        <p><strong>Tap to upload photos</strong></p>
+        <p>Up to 4 photos — error codes, damage, control panel</p>
+        <input type="file" id="symptom-photos" accept="image/*" multiple style="display:none" onchange="handleSymptomPhotos(event)">
+      </div>
+      <div id="symptom-previews" class="photo-previews"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <button class="btn-primary" style="flex:2" onclick="goStep(4)">Run Diagnosis →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: AI DIAGNOSIS -->
+  <div id="step-4" class="hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+        <div class="card-title" style="margin:0">Diagnostic Report</div>
+        <span style="font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-light);padding:3px 9px;border-radius:99px;letter-spacing:0.03em">AI ANALYSIS</span>
+      </div>
+      <div id="ai-output">
+        <div class="thinking">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <span>Analyzing your appliance details…</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="parts-card" class="card hidden">
+      <div class="card-title">Parts likely needed</div>
+      <div class="card-sub">Based on the diagnosis, your technician should bring these.</div>
+      <div id="parts-list"></div>
+    </div>
+
+    <div id="step4-nav" class="hidden">
+      <div class="btn-row">
+        <button class="btn-back" onclick="goStep(3)">← Edit</button>
+        <button class="btn-primary" id="submit-btn" style="flex:2" onclick="submitIntake()">Submit to technician →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: SUCCESS -->
+  <div id="step-5" class="hidden">
+    <div class="card" style="text-align:center;padding:2rem">
+      <div class="success-icon">✓</div>
+      <div class="card-title" style="font-size:18px;margin-bottom:0.4rem">Intake submitted</div>
+      <p style="font-size:13px;color:var(--gray-500);margin-bottom:1.5rem;line-height:1.6">Your diagnostic report has been sent to the repair team. A technician will review it and contact you to confirm your appointment.</p>
+      <table class="summary-table">
+        <tbody id="summary-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const state = {
+  appliance: '', brand: '', age: '', subtype: '',
+  modelNumber: '', serialNumber: '',
+  symptoms: [], symptomText: '',
+  labelPhoto: null, symptomPhotos: [],
+  aiReport: ''
+};
+
+const modelLocations = {
+  'Refrigerator': ['Inside left wall', 'Behind crisper drawer', 'Inside door frame', 'Back panel'],
+  'Washing Machine': ['Inside lid rim', 'Door frame', 'Back panel', 'Under lid'],
+  'Dryer': ['Inside door frame', 'Back panel', 'Side panel'],
+  'Dishwasher': ['Inside door — left side wall', 'Door frame edge', 'Under door'],
+  'Oven / Range': ['Drawer below oven', 'Oven door frame', 'Back panel', 'Side of range'],
+  'Microwave': ['Inside door frame', 'Back of unit', 'Side panel'],
+  'HVAC / AC': ['Side panel', 'Back of unit', 'Inside access panel'],
+  'Water Heater': ['Front label', 'Side panel', 'Near serial plate'],
+  'Other': ['Check door frame', 'Check back panel', 'Check underneath']
+};
+
+const subtypes = {
+  'Refrigerator': { label: 'Configuration', options: ['French Door', 'Side-by-Side', 'Top Freezer', 'Bottom Freezer', 'Built-In', 'Mini Fridge'] },
+  'Washing Machine': { label: 'Type', options: ['Front Load', 'Top Load', 'Stacked Unit', 'Laundry Center'] },
+  'Dryer': { label: 'Type', options: ['Electric', 'Gas', 'Stacked Unit'] },
+  'Oven / Range': { label: 'Type', options: ['Electric', 'Gas', 'Induction', 'Double Oven'] },
+};
+
+const symptomMap = {
+  'Refrigerator': ['Not cooling','Not freezing','Ice maker broken','Making noise','Leaking water','Frost buildup','Running constantly','Water dispenser issue','Error code on display','Door seal issue'],
+  'Washing Machine': ["Won't spin",'Leaking',"Won't drain",'Noisy / vibrating',"Won't start",'Not filling with water','Door stuck','Error code','Stops mid-cycle','Smells bad'],
+  'Dryer': ['Not heating','Takes too long','Making noise',"Won't start",'Drum not turning','Overheating','Error code','Clothes still wet','Burning smell'],
+  'Dishwasher': ['Not cleaning dishes','Leaking','Not draining','Not filling','Door latch broken','Error code','Noisy','Not drying dishes','Display issue'],
+  'Oven / Range': ['Not heating','Uneven heat','Burner won\'t light','Error code','Self-clean issue','Door not sealing','Display issue','Gas smell','Takes too long to heat'],
+  'Microwave': ['Not heating','Sparking','Turntable not spinning','Noisy','Door issue','Display issue','Burning smell'],
+  'HVAC / AC': ['Not cooling','Not heating','Making noise','Leaking water','Short cycling',"Won't turn on",'Error code','Weak airflow','Ice buildup'],
+  'Water Heater': ['No hot water','Leaking','Pilot light out','Making noise','Rusty water','Takes too long','Error code'],
+  'Other': ['Not working','Making noise','Leaking','Error code','Overheating','Other issue']
+};
+
+function selectAppliance(el) {
+  document.querySelectorAll('.appliance-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  state.appliance = el.dataset.appliance;
+  document.getElementById('step1-continue').classList.remove('hidden');
+}
+
+function selectChip(el, group) {
+  if (group === 'age' || group === 'subtype') {
+    el.closest('.chip-group').querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    if (group === 'age') state.age = el.textContent;
+    if (group === 'subtype') state.subtype = el.textContent;
+  } else {
+    el.classList.toggle('selected');
+    const s = el.textContent;
+    if (el.classList.contains('selected')) { if (!state.symptoms.includes(s)) state.symptoms.push(s); }
+    else state.symptoms = state.symptoms.filter(x => x !== s);
+  }
+}
+
+function updateProgress(current) {
+  for (let i = 1; i <= 4; i++) {
+    const el = document.getElementById('ps-' + i);
+    if (!el) continue;
+    el.className = 'progress-step' + (i < current ? ' done' : i === current ? ' active' : '');
+    const circle = el.querySelector('.step-circle');
+    circle.textContent = i < current ? '✓' : i;
+  }
+}
+
+function goStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step-' + i);
+    if (el) el.classList.add('hidden');
+  }
+  document.getElementById('step-' + n).classList.remove('hidden');
+  updateProgress(Math.min(n, 4));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (n === 2) setupStep2();
+  if (n === 3) setupStep3();
+  if (n === 4) runDiagnosis();
+}
+
+function setupStep2() {
+  // Model finder
+  document.getElementById('appliance-name-label').textContent = state.appliance;
+  const locs = modelLocations[state.appliance] || modelLocations['Other'];
+  document.getElementById('model-locs').innerHTML = locs.map(l => `<span class="loc-tag">${l}</span>`).join('');
+
+  // Subtype chips
+  const sub = subtypes[state.appliance];
+  const sf = document.getElementById('subtype-field');
+  if (sub) {
+    document.getElementById('subtype-label').textContent = sub.label;
+    document.getElementById('subtype-chips').innerHTML = sub.options.map(o =>
+      `<span class="chip" onclick="selectChip(this,'subtype')">${o}</span>`).join('');
+    sf.style.display = 'block';
+  } else {
+    sf.style.display = 'none';
+  }
+}
+
+function setupStep3() {
+  const chips = symptomMap[state.appliance] || symptomMap['Other'];
+  document.getElementById('symptom-chips').innerHTML = chips.map(s =>
+    `<span class="chip ${state.symptoms.includes(s)?'selected':''}" onclick="selectChip(this,'symptom')">${s}</span>`
+  ).join('');
+}
+
+function handleLabelPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  state.labelPhoto = file;
+  const preview = document.getElementById('label-preview');
+  const url = URL.createObjectURL(file);
+  preview.innerHTML = `<img src="${url}" class="photo-thumb" style="width:100%;height:120px;border-radius:var(--radius-md)">`;
+}
+
+function handleSymptomPhotos(e) {
+  const files = Array.from(e.target.files).slice(0, 4);
+  state.symptomPhotos = files;
+  const preview = document.getElementById('symptom-previews');
+  preview.innerHTML = '';
+  files.forEach(f => {
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    img.className = 'photo-thumb';
+    preview.appendChild(img);
+  });
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function runDiagnosis() {
+  state.brand = document.getElementById('brand').value;
+  state.modelNumber = document.getElementById('model-number').value;
+  state.serialNumber = document.getElementById('serial-number').value;
+  state.symptomText = document.getElementById('symptom-text').value;
+
+  const prompt = `You are an expert appliance repair technician. A customer has submitted the following intake form. Provide a detailed pre-visit diagnostic report for the repair technician.
+
+APPLIANCE INFORMATION:
+- Type: ${state.appliance}
+- Brand: ${state.brand || 'Unknown'}
+- Configuration: ${state.subtype || 'Not specified'}
+- Age: ${state.age || 'Unknown'}
+- Model Number: ${state.modelNumber || 'Unknown'}
+- Serial Number: ${state.serialNumber || 'Not provided'}
+
+REPORTED SYMPTOMS:
+- Selected: ${state.symptoms.join(', ') || 'None selected'}
+- Customer description: ${state.symptomText || 'None provided'}
+
+${state.labelPhoto ? 'Note: Customer uploaded a photo of the appliance label — extract and confirm any model/serial number visible.' : ''}
+${state.symptomPhotos.length > 0 ? `Note: Customer uploaded ${state.symptomPhotos.length} additional photo(s) of the issue.` : ''}
+
+Please provide your report in this exact format with these exact section headers:
+
+LIKELY CAUSES
+List 2-4 most probable root causes ranked by likelihood. Be specific.
+
+PARTS LIKELY NEEDED
+List specific part names (and part numbers if known for this model). One part per line starting with a dash.
+
+TECHNICIAN NOTES
+Key things the technician should check, test, or bring on the visit. Any brand-specific issues or warnings relevant to this model/brand.
+
+URGENCY
+Single word only: Low, Medium, High, or Emergency. Then one sentence of reasoning.
+
+Keep the response practical and specific. This goes directly to the technician before they leave the shop.`;
+
+  let messages;
+
+  // If we have a label photo, include it
+  if (state.labelPhoto) {
+    try {
+      const b64 = await fileToBase64(state.labelPhoto);
+      messages = [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: state.labelPhoto.type, data: b64 } },
+          { type: 'text', text: prompt }
+        ]
+      }];
+    } catch(e) {
+      messages = [{ role: 'user', content: prompt }];
+    }
+  } else if (state.symptomPhotos.length > 0) {
+    try {
+      const b64 = await fileToBase64(state.symptomPhotos[0]);
+      messages = [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: state.symptomPhotos[0].type, data: b64 } },
+          { type: 'text', text: prompt }
+        ]
+      }];
+    } catch(e) {
+      messages = [{ role: 'user', content: prompt }];
+    }
+  } else {
+    messages = [{ role: 'user', content: prompt }];
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, messages })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || 'Unable to generate report.';
+    state.aiReport = text;
+    renderReport(text);
+  } catch(e) {
+    document.getElementById('ai-output').innerHTML = `<p style="color:var(--red);font-size:13px;padding:0.5rem">Connection error. Please check your internet and try again.</p>`;
+  }
+}
+
+function renderReport(text) {
+  const sections = {};
+  let current = null;
+  const lines = text.split('\n');
+
+  lines.forEach(line => {
+    const t = line.trim();
+    if (!t) return;
+    if (t === 'LIKELY CAUSES') { current = 'causes'; sections.causes = []; }
+    else if (t === 'PARTS LIKELY NEEDED') { current = 'parts'; sections.parts = []; }
+    else if (t === 'TECHNICIAN NOTES') { current = 'notes'; sections.notes = []; }
+    else if (t === 'URGENCY') { current = 'urgency'; sections.urgency = []; }
+    else if (current) { sections[current].push(t); }
+  });
+
+  // Urgency badge
+  const urgencyText = (sections.urgency || []).join(' ');
+  const urgencyWord = urgencyText.split(/[\s.]/)[0]?.toLowerCase() || 'medium';
+  const urgencyClass = urgencyWord.includes('high') || urgencyWord.includes('emergency') ? 'urgency-high' :
+                       urgencyWord.includes('low') ? 'urgency-low' : 'urgency-medium';
+  const urgencyLabel = urgencyWord.charAt(0).toUpperCase() + urgencyWord.slice(1);
+
+  let html = '';
+
+  if (sections.causes?.length) {
+    html += `<h3>Likely Causes</h3>`;
+    sections.causes.forEach(l => { html += `<p>${l.replace(/^[-•*\d.]+\s*/,'')}</p>`; });
+  }
+
+  if (sections.notes?.length) {
+    html += `<h3>Technician Notes</h3>`;
+    sections.notes.forEach(l => { html += `<p>${l.replace(/^[-•*\d.]+\s*/,'')}</p>`; });
+  }
+
+  if (sections.urgency?.length) {
+    html += `<h3>Urgency</h3><p><span class="urgency-badge ${urgencyClass}">${urgencyLabel}</span> ${urgencyText.replace(/^[\w]+[\s.—–]*/,'')}</p>`;
+  }
+
+  document.getElementById('ai-output').innerHTML = `<div class="ai-block">${html}</div>`;
+
+  // Parts card
+  if (sections.parts?.length) {
+    const partsCard = document.getElementById('parts-card');
+    partsCard.classList.remove('hidden');
+    document.getElementById('parts-list').innerHTML = sections.parts
+      .filter(p => p.trim())
+      .map(p => `<div class="part-item"><div class="part-dot"></div><span>${p.replace(/^[-•*]\s*/,'')}</span></div>`)
+      .join('');
+  }
+
+  document.getElementById('step4-nav').classList.remove('hidden');
+}
+
+// ─────────────────────────────────────────────
+// CONFIGURATION — replace these before deploying
+// ─────────────────────────────────────────────
+const CONFIG = {
+  
+  SHEET_WEBHOOK: 'https://script.google.com/macros/s/PASTE_YOUR_URL_HERE/exec',
+
+  // ServiceTitan — fill in once credentials are obtained from the shop
+  SERVICETITAN: {
+    enabled: false,   // flip to true once credentials are ready
+    clientId:     'YOUR_ST_CLIENT_ID',
+    clientSecret: 'YOUR_ST_CLIENT_SECRET',
+    tenantId:     'YOUR_ST_TENANT_ID',
+    // NOTE: In production, these must live in a backend proxy, never in
+    // client-side code. Move this call to your Vercel/Cloudflare function
+    // before going live. This stub is here so the integration point is
+    // clear and the data mapping is already done.
+  }
+};
+
+// ─────────────────────────────────────────────
+// BUILD PAYLOAD — shared by all submission paths
+// ─────────────────────────────────────────────
+function buildPayload() {
+  const submittedAt = new Date().toLocaleString('en-US', { timeZone: 'America/Phoenix' });
+  return {
+    submitted_at:    submittedAt,
+    appliance_type:  state.appliance,
+    brand:           state.brand        || 'Unknown',
+    configuration:   state.subtype      || 'Not specified',
+    age:             state.age          || 'Unknown',
+    model_number:    state.modelNumber  || 'Unknown',
+    serial_number:   state.serialNumber || 'Not provided',
+    symptoms:        state.symptoms.join(', ') || 'None selected',
+    description:     state.symptomText  || 'None provided',
+    photos_uploaded: (state.labelPhoto ? 1 : 0) + state.symptomPhotos.length,
+    // Full technician report — goes to Sheet, not shown to customer
+    ai_report:       state.aiReport     || '',
+    // Parsed sections for cleaner Sheet columns
+    likely_causes:   extractSection(state.aiReport, 'LIKELY CAUSES'),
+    parts_needed:    extractSection(state.aiReport, 'PARTS LIKELY NEEDED'),
+    tech_notes:      extractSection(state.aiReport, 'TECHNICIAN NOTES'),
+    urgency:         extractSection(state.aiReport, 'URGENCY'),
+  };
+}
+
+// Pull a named section out of the raw AI report text
+function extractSection(text, header) {
+  if (!text) return '';
+  const lines  = text.split('\n');
+  const start  = lines.findIndex(l => l.trim() === header);
+  if (start === -1) return '';
+  const result = [];
+  const headers = ['LIKELY CAUSES','PARTS LIKELY NEEDED','TECHNICIAN NOTES','URGENCY'];
+  for (let i = start + 1; i < lines.length; i++) {
+    if (headers.includes(lines[i].trim())) break;
+    if (lines[i].trim()) result.push(lines[i].trim());
+  }
+  return result.join(' | ');
+}
+
+// ─────────────────────────────────────────────
+// GOOGLE SHEET
+// ─────────────────────────────────────────────
+async function sendToSheet(payload) {
+  if (!CONFIG.SHEET_WEBHOOK || CONFIG.SHEET_WEBHOOK.includes('PASTE_YOUR_URL')) {
+    console.warn('Sheet webhook not configured — skipping.');
+    return { ok: true, skipped: true };
+  }
+  const res = await fetch(CONFIG.SHEET_WEBHOOK, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  return { ok: res.ok };
+}
+
+// ─────────────────────────────────────────────
+// SERVICETITAN — stub ready for credentials
+// Map our intake fields → ST job creation fields
+// Move this fetch to a backend proxy before going live
+// ─────────────────────────────────────────────
+async function sendToServiceTitan(payload) {
+  if (!CONFIG.SERVICETITAN.enabled) {
+    console.info('ServiceTitan integration disabled — enable in CONFIG once credentials are ready.');
+    return { ok: true, skipped: true };
+  }
+
+  // Step 1: Get access token
+  const tokenRes = await fetch('https://auth.servicetitan.io/connect/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type:    'client_credentials',
+      client_id:     CONFIG.SERVICETITAN.clientId,
+      client_secret: CONFIG.SERVICETITAN.clientSecret,
+    })
+  });
+  const { access_token } = await tokenRes.json();
+
+  // Step 2: Create job
+  // ServiceTitan job creation endpoint
+  const stPayload = {
+    summary:     `[AI Intake] ${payload.appliance_type} — ${payload.brand} | Model: ${payload.model_number}`,
+    priority:    payload.urgency?.toLowerCase().includes('high') ? 'High' :
+                 payload.urgency?.toLowerCase().includes('emergency') ? 'Critical' : 'Normal',
+    jobTypeId:   null,   // map to ST job type once tenant job types are known
+    customFields: [
+      { name: 'Appliance Type',   value: payload.appliance_type },
+      { name: 'Brand',            value: payload.brand },
+      { name: 'Model Number',     value: payload.model_number },
+      { name: 'Serial Number',    value: payload.serial_number },
+      { name: 'Age',              value: payload.age },
+      { name: 'Symptoms',         value: payload.symptoms },
+      { name: 'Customer Notes',   value: payload.description },
+      { name: 'Likely Causes',    value: payload.likely_causes },
+      { name: 'Parts Needed',     value: payload.parts_needed },
+      { name: 'Technician Notes', value: payload.tech_notes },
+      { name: 'Urgency',          value: payload.urgency },
+      { name: 'Intake Source',    value: 'Online Diagnostic Tool' },
+      { name: 'Submitted At',     value: payload.submitted_at },
+    ]
+  };
+
+  const jobRes = await fetch(
+    `https://api.servicetitan.io/jpm/v2/tenant/${CONFIG.SERVICETITAN.tenantId}/jobs`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${access_token}`,
+        'Content-Type':  'application/json',
+        'ST-App-Key':    CONFIG.SERVICETITAN.clientId,
+      },
+      body: JSON.stringify(stPayload)
+    }
+  );
+  const job = await jobRes.json();
+  return { ok: jobRes.ok, jobId: job.id };
+}
+
+// ─────────────────────────────────────────────
+// MAIN SUBMIT — fires both paths
+// ─────────────────────────────────────────────
+async function submitIntake() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  const payload = buildPayload();
+
+  try {
+    await Promise.allSettled([
+      sendToSheet(payload),
+      sendToServiceTitan(payload)
+    ]);
+  } catch(e) {
+    console.error('Submission error:', e);
+  }
+
+  // Always proceed to confirmation regardless of webhook result
+  // so a webhook hiccup never blocks the customer
+  showSuccess();
+}
+
+// ─────────────────────────────────────────────
+// SUCCESS SCREEN — customer-facing summary only
+// Full report stays in the Sheet for the tech
+// ─────────────────────────────────────────────
+function showSuccess() {
+  for (let i = 1; i <= 5; i++) {
+    const el = document.getElementById('step-' + i);
+    if (el) el.classList.add('hidden');
+  }
+  document.getElementById('step-5').classList.remove('hidden');
+  updateProgress(5);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Customer sees a simplified summary — no AI report details
+  const rows = [
+    ['Appliance',  state.appliance],
+    ['Brand',      state.brand      || '—'],
+    ['Model #',    state.modelNumber || '—'],
+    ['Age',        state.age         || '—'],
+    ['Symptoms',   state.symptoms.slice(0, 3).join(', ') || '—'],
+    ['Photos',     ((state.labelPhoto ? 1 : 0) + state.symptomPhotos.length) + ' uploaded'],
+  ];
+  document.getElementById('summary-body').innerHTML = rows
+    .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+    .join('');
+}
+</script>
+</body>
+</html>
