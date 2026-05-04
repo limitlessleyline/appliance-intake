@@ -519,7 +519,7 @@
 
       <div class="field">
         <label>Brand</label>
-        <input type="text" id="brand" placeholder="e.g. Whirlpool, Samsung, LG, Bosch…" onblur="fetchLabelLocation()">
+        <input type="text" id="brand" placeholder="e.g. Whirlpool, Samsung, LG, Bosch…">
       </div>
 
       <div class="field">
@@ -771,7 +771,7 @@ function setupStep2() {
 async function fetchLabelLocation() {
   const brand = document.getElementById('brand').value || '';
   const appliance = state.appliance;
-  console.log('fetchLabelLocation called — brand:', brand, 'appliance:', appliance);
+
   const prompt = `You are an appliance repair expert. A customer needs to find the model and serial number label on their ${brand ? brand + ' ' : ''}${appliance}.
 
 Respond with ONLY this exact JSON format, nothing else:
@@ -905,34 +905,29 @@ Keep the response practical and specific. This goes directly to the technician b
 
   let messages;
 
-  // If we have a label photo, include it
-  if (state.labelPhoto) {
-    try {
+  // Build content array with all available photos + prompt
+  try {
+    const contentParts = [];
+
+    // Add label photo first if available
+    if (state.labelPhoto) {
       const b64 = await fileToBase64(state.labelPhoto);
-      messages = [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: state.labelPhoto.type, data: b64 } },
-          { type: 'text', text: prompt }
-        ]
-      }];
-    } catch(e) {
-      messages = [{ role: 'user', content: prompt }];
+      contentParts.push({ type: 'image', source: { type: 'base64', media_type: state.labelPhoto.type, data: b64 } });
     }
-  } else if (state.symptomPhotos.length > 0) {
-    try {
-      const b64 = await fileToBase64(state.symptomPhotos[0]);
-      messages = [{
-        role: 'user',
-        content: [
-          { type: 'image', source: { type: 'base64', media_type: state.symptomPhotos[0].type, data: b64 } },
-          { type: 'text', text: prompt }
-        ]
-      }];
-    } catch(e) {
-      messages = [{ role: 'user', content: prompt }];
+
+    // Add up to 4 symptom photos
+    for (const photo of state.symptomPhotos.slice(0, 4)) {
+      try {
+        const b64 = await fileToBase64(photo);
+        contentParts.push({ type: 'image', source: { type: 'base64', media_type: photo.type, data: b64 } });
+      } catch(e) { /* skip photos that fail */ }
     }
-  } else {
+
+    // Add the text prompt
+    contentParts.push({ type: 'text', text: prompt });
+
+    messages = [{ role: 'user', content: contentParts.length > 1 ? contentParts : prompt }];
+  } catch(e) {
     messages = [{ role: 'user', content: prompt }];
   }
 
@@ -993,11 +988,15 @@ function renderReport(text) {
 function backfillModelInfo(text) {
   // Look for model number patterns in the AI response
   const modelPatterns = [
+    /\*\*Confirmed Model:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
+    /Confirmed Model[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /\*\*Model:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /Model Number[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /Model[:\s#]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
   ];
   const serialPatterns = [
+    /\*\*Confirmed Serial:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
+    /Confirmed Serial[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /\*\*Serial:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /Serial Number[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /Serial[:\s#]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
