@@ -975,33 +975,14 @@ function renderReport(text) {
                        urgencyWord.includes('low') ? 'urgency-low' : 'urgency-medium';
   const urgencyLabel = urgencyWord.charAt(0).toUpperCase() + urgencyWord.slice(1);
 
-  let html = '';
-
-  if (sections.causes?.length) {
-    html += `<h3>Likely Causes</h3>`;
-    sections.causes.forEach(l => { html += `<p>${l.replace(/^[-•*\d.]+\s*/,'')}</p>`; });
-  }
-
-  if (sections.notes?.length) {
-    html += `<h3>Technician Notes</h3>`;
-    sections.notes.forEach(l => { html += `<p>${l.replace(/^[-•*\d.]+\s*/,'')}</p>`; });
-  }
-
-  if (sections.urgency?.length) {
-    html += `<h3>Urgency</h3><p><span class="urgency-badge ${urgencyClass}">${urgencyLabel}</span> ${urgencyText.replace(/^[\w]+[\s.—–]*/,'')}</p>`;
-  }
-
-  document.getElementById('ai-output').innerHTML = `<div class="ai-block">${html}</div>`;
-
-  // Parts card
-  if (sections.parts?.length) {
-    const partsCard = document.getElementById('parts-card');
-    partsCard.classList.remove('hidden');
-    document.getElementById('parts-list').innerHTML = sections.parts
-      .filter(p => p.trim())
-      .map(p => `<div class="part-item"><div class="part-dot"></div><span>${p.replace(/^[-•*]\s*/,'')}</span></div>`)
-      .join('');
-  }
+  // Customer sees simple confirmation — full report goes to tech via Google Sheet
+  document.getElementById('ai-output').innerHTML = `<div class="ai-block">
+    <p style="font-size:14px;color:var(--gray-700);line-height:1.7">
+      ✅ Your appliance details have been analyzed. A technician will review the full diagnostic report before arriving.
+    </p>
+    ${urgencyText ? `<p style="margin-top:10px;font-size:13px">Priority: <span class="urgency-badge ${urgencyClass}">${urgencyLabel}</span></p>` : ''}
+    ${state.modelNumber ? `<p style="margin-top:8px;font-size:13px;color:var(--gray-600)">Model on file: <strong>${state.modelNumber}</strong></p>` : ''}
+  </div>`;
 
   document.getElementById('step4-nav').classList.remove('hidden');
 
@@ -1012,16 +993,14 @@ function renderReport(text) {
 function backfillModelInfo(text) {
   // Look for model number patterns in the AI response
   const modelPatterns = [
-    /Model[:\s#]+([A-Z0-9]{5,20})/i,
-    /Model Number[:\s]+([A-Z0-9]{5,20})/i,
-    /\*\*Model:\*\*\s*([A-Z0-9]{5,20})/i,
-    /Model:\s*([A-Z0-9]{5,20})/i,
+    /\*\*Model:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
+    /Model Number[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
+    /Model[:\s#]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
   ];
   const serialPatterns = [
-    /Serial[:\s#]+([A-Z0-9]{5,20})/i,
-    /Serial Number[:\s]+([A-Z0-9]{5,20})/i,
-    /\*\*Serial:\*\*\s*([A-Z0-9]{5,20})/i,
-    /Serial:\s*([A-Z0-9]{5,20})/i,
+    /\*\*Serial:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
+    /Serial Number[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
+    /Serial[:\s#]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
   ];
 
   const modelField = document.getElementById('model-number');
@@ -1104,14 +1083,18 @@ function buildPayload() {
 // Pull a named section out of the raw AI report text
 function extractSection(text, header) {
   if (!text) return '';
-  const lines  = text.split('\n');
-  const start  = lines.findIndex(l => l.trim() === header);
+  const lines = text.split('\n');
+  const start = lines.findIndex(l => {
+    const clean = l.trim().replace(/^#+\s*/, '').replace(/\*\*/g, '').toUpperCase();
+    return clean.includes(header.toUpperCase());
+  });
   if (start === -1) return '';
+  const sectionHeaders = ['LIKELY CAUSES','PARTS LIKELY NEEDED','TECHNICIAN NOTES','URGENCY'];
   const result = [];
-  const headers = ['LIKELY CAUSES','PARTS LIKELY NEEDED','TECHNICIAN NOTES','URGENCY'];
   for (let i = start + 1; i < lines.length; i++) {
-    if (headers.includes(lines[i].trim())) break;
-    if (lines[i].trim()) result.push(lines[i].trim());
+    const clean = lines[i].trim().replace(/^#+\s*/, '').replace(/\*\*/g, '').toUpperCase();
+    if (sectionHeaders.some(h => clean.includes(h))) break;
+    if (lines[i].trim() && lines[i].trim() !== '---') result.push(lines[i].trim());
   }
   return result.join(' | ');
 }
