@@ -570,7 +570,7 @@
         <div class="drop-icon">📷</div>
         <p><strong>Tap to photograph the label</strong></p>
         <p>Our AI will extract the model number from your photo</p>
-        <input type="file" id="label-photo" accept="image/*" capture="environment" style="display:none" onchange="handleLabelPhoto(event)">
+        <input type="file" id="label-photo" accept="image/*" style="display:none" onchange="handleLabelPhoto(event)">
       </div>
       <div id="label-preview" class="photo-previews"></div>
     </div>
@@ -587,7 +587,7 @@
       <div class="card-title">What's going wrong?</div>
       <div class="card-sub">Select all symptoms that apply.</div>
       <div class="chip-group" id="symptom-chips"></div>
-      <input type="text" id="other-symptom-box" class="hidden" placeholder="Describe other symptom…" style="margin-bottom:0.5rem" oninput="state.otherSymptom=this.value">
+      <input type="text" id="other-symptom-box" class="hidden" placeholder="Describe other symptom…" style="margin-bottom:0.5rem;width:100%;border:1.5px solid var(--gray-200);border-radius:var(--border-radius-md,10px);padding:10px 13px;font-size:14px;font-family:inherit;margin-top:6px" oninput="state.otherSymptom=this.value">
     </div>
 
     <div class="card">
@@ -603,7 +603,7 @@
         <div class="drop-icon">📸</div>
         <p><strong>Tap to upload photos</strong></p>
         <p>Up to 4 photos — error codes, damage, control panel</p>
-        <input type="file" id="symptom-photos" accept="image/*" capture="environment" multiple style="display:none" onchange="handleSymptomPhotos(event)">
+        <input type="file" id="symptom-photos" accept="image/*" multiple style="display:none" onchange="handleSymptomPhotos(event)">
       </div>
       <div id="symptom-previews" class="photo-previews"></div>
     </div>
@@ -667,15 +667,15 @@ const state = {
 };
 
 const modelLocations = {
-  'Refrigerator':    { primary: 'Inside the fridge — left wall or ceiling', fallbacks: ['Behind the crisper drawer', 'Inside door frame'] },
-  'Washing Machine': { primary: 'Inside the lid rim or door frame', fallbacks: ['Back panel', 'Under the lid'] },
+  'Refrigerator':    { primary: 'Inside the fridge — on either side wall near the top', fallbacks: ['Behind the crisper drawer', 'Inner door frame', 'Back wall of fridge compartment'] },
+  'Washing Machine': { primary: 'Inside the lid rim (top load) or door frame (front load)', fallbacks: ['Back panel', 'Under the lid'] },
   'Dryer':           { primary: 'Inside the door frame', fallbacks: ['Back panel', 'Side panel'] },
-  'Dishwasher':      { primary: 'Inside the door — left side wall', fallbacks: ['Door frame edge', 'Under the door'] },
-  'Oven / Range':    { primary: 'Drawer below the oven', fallbacks: ['Oven door frame when open', 'Back panel'] },
+  'Dishwasher':      { primary: 'Inside the door — left side wall when door is open', fallbacks: ['Door frame edge', 'Under the door'] },
+  'Oven / Range':    { primary: 'Drawer below the oven (pull it out fully)', fallbacks: ['Oven door frame when open', 'Back panel', 'Side of range frame'] },
   'Microwave':       { primary: 'Inside the door frame', fallbacks: ['Back of unit', 'Side panel'] },
-  'HVAC / AC':       { primary: 'Side panel', fallbacks: ['Back of unit', 'Inside access panel'] },
-  'Water Heater':    { primary: 'Front label near the bottom', fallbacks: ['Side panel'] },
-  'Other':           { primary: 'Check the door frame or back panel', fallbacks: ['Underneath the unit'] }
+  'HVAC / AC':       { primary: 'Side panel near the base', fallbacks: ['Back of unit', 'Inside access panel'] },
+  'Water Heater':    { primary: 'Front label near the middle or bottom', fallbacks: ['Side panel'] },
+  'Other':           { primary: 'Check the door frame or inside any access panel', fallbacks: ['Back panel', 'Underneath the unit'] }
 };
 
 const subtypes = {
@@ -749,9 +749,9 @@ function setupStep2() {
   document.getElementById('appliance-name-label').textContent = state.appliance;
   const loc = modelLocations[state.appliance] || modelLocations['Other'];
   document.getElementById('model-locs').innerHTML =
-    `<span class="loc-tag" style="background:#185FA5;color:white;border-color:#185FA5">📍 ${loc.primary}</span>` +
-    (loc.fallbacks.length ? `<span style="font-size:11px;color:var(--gray-500);align-self:center">Not there? Also check:</span>` +
-    loc.fallbacks.map(f => `<span class="loc-tag">${f}</span>`).join('') : '');
+    `<span class="loc-tag" style="background:#1A56A0;color:white;border-color:#1A56A0">📍 ${loc.primary}</span>` +
+    `<span style="font-size:11px;color:var(--gray-500);align-self:center;display:block;width:100%;margin-top:4px">Not there? Also check:</span>` +
+    loc.fallbacks.map(f => `<span class="loc-tag">${f}</span>`).join('');
 
   // Subtype chips
   const sub = subtypes[state.appliance];
@@ -772,17 +772,18 @@ function setupStep3() {
     chips.map(s =>
       `<span class="chip ${state.symptoms.includes(s)?'selected':''}" data-value="${s}" onclick="selectChip(this,'symptom')">${s}</span>`
     ).join('') +
-    `<span class="chip" id="other-chip" data-value="Other" onclick="toggleOtherSymptom(this)">Other…</span>`;
+    `<span class="chip" id="other-chip" onclick="toggleOtherSymptom(this)">Other…</span>`;
 }
 
 function toggleOtherSymptom(el) {
   el.classList.toggle('selected');
+  el.blur();
   const box = document.getElementById('other-symptom-box');
   if (el.classList.contains('selected')) {
-    box.classList.remove('hidden');
+    box.style.display = 'block';
     box.focus();
   } else {
-    box.classList.add('hidden');
+    box.style.display = 'none';
     state.otherSymptom = '';
     box.value = '';
   }
@@ -836,7 +837,7 @@ APPLIANCE INFORMATION:
 - Serial Number: ${state.serialNumber || 'Not provided'}
 
 REPORTED SYMPTOMS:
-- Selected: ${state.symptoms.join(', ')}${state.otherSymptom ? ', Other: ' + state.otherSymptom : '' || 'None selected'}
+- Selected: ${[...state.symptoms, ...(state.otherSymptom ? ['Other: ' + state.otherSymptom] : [])].join(', ') || 'None selected'}
 - Customer description: ${state.symptomText || 'None provided'}
 
 ${state.labelPhoto ? 'Note: Customer uploaded a photo of the appliance label — extract and confirm any model/serial number visible.' : ''}
@@ -1028,12 +1029,15 @@ async function sendToSheet(payload) {
     console.warn('Sheet webhook not configured — skipping.');
     return { ok: true, skipped: true };
   }
-  const res = await fetch(CONFIG.SHEET_WEBHOOK, {
+  // no-cors needed because Google Apps Script doesn't return CORS headers
+  // Response will be opaque but the sheet will still receive the data
+  await fetch(CONFIG.SHEET_WEBHOOK, {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
-  return { ok: res.ok };
+  return { ok: true };
 }
 
 // ─────────────────────────────────────────────
