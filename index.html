@@ -893,15 +893,13 @@ Keep the response practical and specific. This goes directly to the technician b
   }
 
   try {
-    const res = await fetch('https://shiny-disk-1dbe.gmbrown1014.workers.dev', {
+    const res = await fetch('/api/diagnose', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages })
     });
     const data = await res.json();
-    console.log('RAW RESPONSE:', JSON.stringify(data));
     const text = data.content?.find(b => b.type === 'text')?.text || 'Unable to generate report.';
-    console.log('PARSED TEXT:', text);
     state.aiReport = text;
     renderReport(text);
   } catch(e) {
@@ -916,13 +914,14 @@ function renderReport(text) {
   const lines = text.split('\n');
 
   lines.forEach(line => {
-    const t = line.trim();
+    const t = line.trim().replace(/^#+\s*/, '').replace(/\*\*/g, '').replace(/^---+$/, '').trim();
     if (!t) return;
-    if (t === 'LIKELY CAUSES') { current = 'causes'; sections.causes = []; }
-    else if (t === 'PARTS LIKELY NEEDED') { current = 'parts'; sections.parts = []; }
-    else if (t === 'TECHNICIAN NOTES') { current = 'notes'; sections.notes = []; }
-    else if (t === 'URGENCY') { current = 'urgency'; sections.urgency = []; }
-    else if (current) { sections[current].push(t); }
+    const tu = t.toUpperCase();
+    if (tu.includes('LIKELY CAUSES')) { current = 'causes'; sections.causes = []; }
+    else if (tu.includes('PARTS LIKELY NEEDED') || tu.includes('PARTS NEEDED')) { current = 'parts'; sections.parts = []; }
+    else if (tu.includes('TECHNICIAN NOTES') || tu.includes('TECH NOTES')) { current = 'notes'; sections.notes = []; }
+    else if (tu === 'URGENCY') { current = 'urgency'; sections.urgency = []; }
+    else if (current) { sections[current].push(line.trim()); }
   });
 
   // Urgency badge
@@ -968,7 +967,7 @@ function renderReport(text) {
 // ─────────────────────────────────────────────
 const CONFIG = {
   
-  SHEET_WEBHOOK: 'https://script.google.com/macros/s/AKfycbzBhaa_Xj72mI56NRqBGwcmXMsNeNKOftmWsKDGWBxAYYDBrWaPaL2KGFiTxGgyr8va/exec',
+  SHEET_WEBHOOK: 'https://script.google.com/macros/s/AKfycbyoIFOETaqR0BJFNls1ymcSzcvTuGCm2sI0Zp836cK5p06CgOjzzxzpLUcpJUVwj1KT/exec',
 
   // ServiceTitan — fill in once credentials are obtained from the shop
   SERVICETITAN: {
