@@ -937,7 +937,7 @@ Keep the response practical and specific. This goes directly to the technician b
   }
 
   try {
-    const res = await fetch('/api/diagnose', {
+    const res = await fetch('https://shiny-disk-1dbe.gmbrown1014.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages })
