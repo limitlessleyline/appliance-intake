@@ -988,6 +988,7 @@ function renderReport(text) {
 function backfillModelInfo(text) {
   // Look for model number patterns in the AI response
   const modelPatterns = [
+    /Model\s+\*\*([A-Z0-9][A-Z0-9\-\/]{3,19})\*\*/i,
     /\*\*Confirmed Model:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /Confirmed Model[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /\*\*Model:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
@@ -995,6 +996,7 @@ function backfillModelInfo(text) {
     /Model[:\s#]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
   ];
   const serialPatterns = [
+    /Serial\s+\*\*([A-Z0-9][A-Z0-9\-\/]{3,19})\*\*/i,
     /\*\*Confirmed Serial:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /Confirmed Serial[:\s]+([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
     /\*\*Serial:\*\*\s*([A-Z0-9][A-Z0-9\-\/]{3,19})/i,
