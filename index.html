@@ -899,7 +899,9 @@ Keep the response practical and specific. This goes directly to the technician b
       body: JSON.stringify({ messages })
     });
     const data = await res.json();
+    console.log('RAW RESPONSE:', JSON.stringify(data));
     const text = data.content?.find(b => b.type === 'text')?.text || 'Unable to generate report.';
+    console.log('PARSED TEXT:', text);
     state.aiReport = text;
     renderReport(text);
   } catch(e) {
