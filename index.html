@@ -745,13 +745,15 @@ function goStep(n) {
 }
 
 function setupStep2() {
-  // Model finder
+  // Set appliance name label
   document.getElementById('appliance-name-label').textContent = state.appliance;
-  const loc = modelLocations[state.appliance] || modelLocations['Other'];
+
+  // Show loading state while AI fetches location
   document.getElementById('model-locs').innerHTML =
-    `<span class="loc-tag" style="background:#1A56A0;color:white;border-color:#1A56A0">📍 ${loc.primary}</span>` +
-    `<span style="font-size:11px;color:var(--gray-500);align-self:center;display:block;width:100%;margin-top:4px">Not there? Also check:</span>` +
-    loc.fallbacks.map(f => `<span class="loc-tag">${f}</span>`).join('');
+    `<span style="font-size:12px;color:var(--gray-500)">Finding label location…</span>`;
+
+  // Fire AI call for label location (non-blocking)
+  fetchLabelLocation();
 
   // Subtype chips
   const sub = subtypes[state.appliance];
@@ -763,6 +765,48 @@ function setupStep2() {
     sf.style.display = 'block';
   } else {
     sf.style.display = 'none';
+  }
+}
+
+async function fetchLabelLocation() {
+  const brand = document.getElementById('brand').value || '';
+  const appliance = state.appliance;
+
+  const prompt = `You are an appliance repair expert. A customer needs to find the model and serial number label on their ${brand ? brand + ' ' : ''}${appliance}.
+
+Respond with ONLY this exact JSON format, nothing else:
+{
+  "primary": "one specific sentence describing the most likely label location",
+  "fallbacks": ["second most likely location", "third most likely location"]
+}
+
+Be specific to the brand and appliance type. Keep each location description under 10 words.`;
+
+  try {
+    const res = await fetch('https://shiny-disk-1dbe.gmbrown1014.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 150
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const loc = JSON.parse(clean);
+
+    document.getElementById('model-locs').innerHTML =
+      `<span class="loc-tag" style="background:#1A56A0;color:white;border-color:#1A56A0">📍 ${loc.primary}</span>` +
+      `<span style="font-size:11px;color:var(--gray-500);align-self:center;display:block;width:100%;margin-top:4px">Not there? Also check:</span>` +
+      loc.fallbacks.map(f => `<span class="loc-tag">${f}</span>`).join('');
+  } catch(e) {
+    // Fallback to static lookup if AI call fails
+    const loc = modelLocations[state.appliance] || modelLocations['Other'];
+    document.getElementById('model-locs').innerHTML =
+      `<span class="loc-tag" style="background:#1A56A0;color:white;border-color:#1A56A0">📍 ${loc.primary}</span>` +
+      `<span style="font-size:11px;color:var(--gray-500);align-self:center;display:block;width:100%;margin-top:4px">Not there? Also check:</span>` +
+      loc.fallbacks.map(f => `<span class="loc-tag">${f}</span>`).join('');
   }
 }
 
@@ -960,6 +1004,55 @@ function renderReport(text) {
   }
 
   document.getElementById('step4-nav').classList.remove('hidden');
+
+  // Backfill model/serial number if AI extracted them from photo
+  backfillModelInfo(text);
+}
+
+function backfillModelInfo(text) {
+  // Look for model number patterns in the AI response
+  const modelPatterns = [
+    /Model[:\s#]+([A-Z0-9]{5,20})/i,
+    /Model Number[:\s]+([A-Z0-9]{5,20})/i,
+    /\*\*Model:\*\*\s*([A-Z0-9]{5,20})/i,
+    /Model:\s*([A-Z0-9]{5,20})/i,
+  ];
+  const serialPatterns = [
+    /Serial[:\s#]+([A-Z0-9]{5,20})/i,
+    /Serial Number[:\s]+([A-Z0-9]{5,20})/i,
+    /\*\*Serial:\*\*\s*([A-Z0-9]{5,20})/i,
+    /Serial:\s*([A-Z0-9]{5,20})/i,
+  ];
+
+  const modelField = document.getElementById('model-number');
+  const serialField = document.getElementById('serial-number');
+
+  // Only backfill if field is currently empty
+  if (!state.modelNumber) {
+    for (const pattern of modelPatterns) {
+      const match = text.match(pattern);
+      if (match && match[1]) {
+        modelField.value = match[1];
+        state.modelNumber = match[1];
+        modelField.style.borderColor = 'var(--green)';
+        modelField.title = 'Auto-filled from photo';
+        break;
+      }
+    }
+  }
+
+  if (!state.serialNumber) {
+    for (const pattern of serialPatterns) {
+      const match = text.match(pattern);
+      if (match && match[1]) {
+        serialField.value = match[1];
+        state.serialNumber = match[1];
+        serialField.style.borderColor = 'var(--green)';
+        serialField.title = 'Auto-filled from photo';
+        break;
+      }
+    }
+  }
 }
 
 // ─────────────────────────────────────────────
