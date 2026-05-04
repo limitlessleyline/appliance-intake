@@ -908,6 +908,7 @@ Keep the response practical and specific. This goes directly to the technician b
 }
 
 function renderReport(text) {
+  console.log('AI RESPONSE:', text);
   const sections = {};
   let current = null;
   const lines = text.split('\n');
