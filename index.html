@@ -771,7 +771,7 @@ function setupStep2() {
 async function fetchLabelLocation() {
   const brand = document.getElementById('brand').value || '';
   const appliance = state.appliance;
-
+  console.log('fetchLabelLocation called — brand:', brand, 'appliance:', appliance);
   const prompt = `You are an appliance repair expert. A customer needs to find the model and serial number label on their ${brand ? brand + ' ' : ''}${appliance}.
 
 Respond with ONLY this exact JSON format, nothing else:
